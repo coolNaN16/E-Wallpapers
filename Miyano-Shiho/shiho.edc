@@ -1,0 +1,281 @@
+#define HAIR_SWAY_SPEED 1.5
+#define DEB_SPIN_SPEED 30
+
+collections {
+   images {
+      // image: "p-1920.png" RAW;
+      image: "Shiho.svg" RAW;
+      image: "Shiho_hair.svg" RAW;
+      image: "Shiho_half.svg" RAW;
+      image: "Shiho_full.svg" RAW;
+      image: "blush_left.svg" RAW;
+      image: "blush_right.svg" RAW;
+      image: "debian.svg" RAW;
+   }
+   styles {
+      style { name: "title_style";
+         base: "font=Cursive font_size=64 color=#FFFFFF20 align=left wrap=word";
+         tag: "b" "+ font=Sans:style=Bold";
+      }
+   }
+   group { name: "e/desktop/background";
+      // --- ADD THIS DATA META BLOCK ---
+      data {
+         item: "style" "0"; // 0 = Scaled/Stretched, 1 = Centered, 2 = Tiled
+      }
+      parts {
+         part { name: "wallpaper";
+            type: RECT; // IMAGE
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+
+               aspect: 1.777 1.777;
+
+               color: 82 48 41 255;
+
+               // image {
+               //    // normal: "p-1920.png";
+               // }
+            }
+         }
+
+         part { name: "title";
+            type: TEXTBLOCK;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               text {
+                  style: "title_style";
+                  // text: "<i> Miyano Shiho </i>";
+               }
+               
+
+               rel1.relative: 0.075 0.85;
+               rel2.relative: 0.5 0.95;
+
+            }
+         }
+
+         part { name: "debian_logo";
+            type: IMAGE;
+            description { state: "default" 0.0;
+               rel1.relative: 0.30 0.46;
+               rel2.relative: 0.36 0.54;
+
+               align: 0.5 0.5;
+
+               aspect: 1 1;
+
+               image {
+                  normal: "debian.svg";
+               }
+
+               map {
+                  on: 1;
+                  smooth: 1;
+                  rotation.z: 0; 
+                  // rotation.center: "shiho_sprite";
+               }
+            }
+
+            description { state: "default" 0.1;
+               inherit: "default" 0.0;
+               map.rotation.z: 360;
+            }
+         }
+         
+         
+         part { name: "shiho_sprite";
+            type: IMAGE;
+            description { state: "default" 0.0;
+               aspect: 1 1;
+               rel1.relative: 0.7 0.5;
+               rel2.relative: 0.9 1.0;
+               image {
+                  normal: "Shiho.svg";
+               }
+            }
+            description { state: "half" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "Shiho_half.svg";
+            }
+            description { state: "full" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "Shiho_full.svg";
+            }
+         }
+
+         part { name: "blush_left";
+            type: IMAGE;
+            description { state: "default" 0.0;
+               rel1.to: "shiho_sprite";
+               rel2.to: "shiho_sprite";
+               color: 255 255 255 0; 
+               
+               image {
+                  normal: "blush_left.svg";
+               }
+            }
+            description { state: "show" 0.0;
+               inherit: "default" 0.0;
+
+               color: 255 255 255 255; 
+            }
+         
+         }
+         part { name: "blush_right";
+            type: IMAGE;
+            description { state: "default" 0.0;
+               rel1.to: "shiho_sprite";
+               rel2.to: "shiho_sprite";
+               color: 255 255 255 0; 
+               
+               image {
+                  normal: "blush_right.svg";
+               }
+            }
+            description { state: "show" 0.0;
+               inherit: "default" 0.0;
+
+               color: 255 255 255 255; 
+            }
+         
+         }
+
+         part { name: "shiho_hair";
+            type: IMAGE;
+            description { state: "default" 0.0;
+               // aspect: 2 2;
+               rel1.to: "shiho_sprite";
+               rel2.to: "shiho_sprite";
+               image {
+                  normal: "Shiho_hair.svg";
+               }
+               
+               rel1.offset: 0 -3;
+               rel2.offset: 6 2;
+               map {
+                  on: 1;
+                  smooth: 1;
+                  rotation.z: -1.7; 
+                  rotation.center: "shiho_sprite";
+               }
+            }
+            description { state: "default" 0.1;
+               inherit: "default" 0.0;
+               rel1.offset: -10 0;
+               rel2.offset: 3 10;
+               map {
+                  on: 1;
+                  smooth: 1;
+                  // Rotate subtly by 4 degrees along a curved arc
+                  rotation.z: 1.5; 
+                  rotation.center: "shiho_sprite";
+               }
+            }
+            description { state: "default" 0.2;
+               inherit: "default" 0.1;
+               rel2.offset: 5 -5; // 6 2
+               rel1.offset: 3 -10;
+            }
+         }
+
+
+      }
+      /* Step 4: Logic goes here */
+      programs {
+         program { name: "hair_1";
+            signal: "load";
+            action: STATE_SET "default" 0.0;
+            target: "shiho_hair";
+            transition: DECELERATE HAIR_SWAY_SPEED;
+            after: "hair_2";
+         }
+
+         program { name: "hair_2";
+            signal: "";
+            action: STATE_SET "default" 0.1;
+            target: "shiho_hair";
+            transition: SINUSOIDAL HAIR_SWAY_SPEED;
+            after: "hair_1";
+         } 
+
+         program { name: "shiho_clicked_1";
+            in: 0.1 0.5;
+            signal: "mouse,clicked,1";
+            source: "shiho_hair";
+            action: STATE_SET "half" 0.0;
+            target: "shiho_sprite";
+         }
+         program { name: "shiho_clicked_2";
+            in: 0.1 0.5;
+            signal: "mouse,clicked,2";
+            source: "shiho_hair";
+            action: STATE_SET "default" 0.0;
+            target: "shiho_sprite";
+         }
+         program { name: "shiho_clicked_3_eyes";
+            signal: "mouse,clicked,3";
+            source: "shiho_hair";
+            action: STATE_SET "full" 0.0;
+            target: "shiho_sprite";
+            // transition: SINUSOIDAL 0.2;
+         }
+         program { name: "shiho_clicked_3_blush";
+            signal: "mouse,clicked,3";
+            source: "shiho_hair";
+            action: STATE_SET "show" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            transition: SINUSOIDAL 0.2;
+         }
+         program { name: "shiho_hover_in";
+            signal: "mouse,in";
+            source: "shiho_hair";
+            action: STATE_SET "show" 0.0;
+            target: "blush_left";
+            transition: SINUSOIDAL 0.2;
+         }
+         program { name: "shiho_hover_out";
+            signal: "mouse,out";
+            source: "shiho_hair";
+            action: STATE_SET "default" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            target: "shiho_sprite";
+            transition: SINUSOIDAL 0.2;
+         }
+
+         program { name: "shiho_blink_1";
+            in: 0.5 0.5;
+            signal: "load";
+            action: STATE_SET "default" 0.0;
+            target: "shiho_sprite";
+            after: "shiho_blink_2";
+         }
+
+         program { name: "shiho_blink_2";
+            in: 5.0 10.0;
+            signal: "";
+            action: STATE_SET "full" 0.0;
+            target: "shiho_sprite";
+            after: "shiho_blink_1";
+         }
+
+         program { name: "deb_1";
+            signal: "";
+            action: STATE_SET "default" 0.0;
+            target: "debian_logo";
+            transition: LINEAR DEB_SPIN_SPEED;
+            after: "deb_2";
+         }
+         program { name: "deb_2";
+            signal: "load";
+            action: STATE_SET "default" 0.1;
+            target: "debian_logo";
+            transition: LINEAR 0.0;
+            after: "deb_1";
+         }
+      }
+   }
+}
