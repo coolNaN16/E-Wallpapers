@@ -1,2 +1,2 @@
 # E-Wallpapers
-## Enlightenment DE Wallpapers.
+Enlightenment DE Wallpapers.
