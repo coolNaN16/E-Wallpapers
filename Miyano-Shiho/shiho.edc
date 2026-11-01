@@ -180,6 +180,15 @@ collections {
             }
          }
 
+         part { name: "shiho_bounding";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.to: "shiho_sprite";
+               rel2.to: "shiho_sprite";
+            }
+         }
+
 
       }
       /* Step 4: Logic goes here */
@@ -188,7 +197,7 @@ collections {
             signal: "load";
             action: STATE_SET "default" 0.0;
             target: "shiho_hair";
-            transition: DECELERATE HAIR_SWAY_SPEED;
+            transition: DECELERATE 2.0; // 1.5
             after: "hair_2";
          }
 
@@ -196,9 +205,45 @@ collections {
             signal: "";
             action: STATE_SET "default" 0.1;
             target: "shiho_hair";
-            transition: SINUSOIDAL HAIR_SWAY_SPEED;
+            transition: SINUSOIDAL 1.8; // HAIR_SWAY_SPEED = 1.5
             after: "hair_1";
          } 
+
+         program { name: "mouse_click_1";
+            signal: "mouse,clicked,1";
+            source: "wallpaper";
+            action: STATE_SET "show" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            transition: SINUSOIDAL 0.2;
+         }
+
+         program { name: "mouse_click_2";
+            signal: "mouse,clicked,2";
+            source: "wallpaper";
+            action: STATE_SET "default" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            transition: SINUSOIDAL 0.2;
+         }
+
+         program { name: "mouse_click_3";
+            signal: "mouse,clicked,3";
+            source: "wallpaper";
+            action: STATE_SET "default" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            transition: SINUSOIDAL 0.2;
+         }
+
+         program { name: "mouse_hover_wallpaper";
+            signal: "mouse,in";
+            source: "wallpaper";
+            action: STATE_SET "default" 0.0;
+            target: "blush_left";
+            target: "blush_right";
+            transition: SINUSOIDAL 0.5;
+         }
 
          program { name: "shiho_clicked_1";
             in: 0.1 0.5;
@@ -210,20 +255,20 @@ collections {
          program { name: "shiho_clicked_2";
             in: 0.1 0.5;
             signal: "mouse,clicked,2";
-            source: "shiho_hair";
+            source: "shiho_bounding";
             action: STATE_SET "default" 0.0;
             target: "shiho_sprite";
          }
          program { name: "shiho_clicked_3_eyes";
             signal: "mouse,clicked,3";
-            source: "shiho_hair";
+            source: "shiho_bounding";
             action: STATE_SET "full" 0.0;
             target: "shiho_sprite";
             // transition: SINUSOIDAL 0.2;
          }
          program { name: "shiho_clicked_3_blush";
             signal: "mouse,clicked,3";
-            source: "shiho_hair";
+            source: "shiho_bounding";
             action: STATE_SET "show" 0.0;
             target: "blush_left";
             target: "blush_right";
@@ -231,14 +276,21 @@ collections {
          }
          program { name: "shiho_hover_in";
             signal: "mouse,in";
-            source: "shiho_hair";
+            source: "shiho_bounding";
             action: STATE_SET "show" 0.0;
             target: "blush_left";
             transition: SINUSOIDAL 0.2;
          }
+         program { name: "shiho_hover_in_2";
+            signal: "mouse,in";
+            source: "shiho_bounding";
+            action: STATE_SET "default" 0.0;
+            target: "blush_right";
+            transition: SINUSOIDAL 0.2;
+         }
          program { name: "shiho_hover_out";
             signal: "mouse,out";
-            source: "shiho_hair";
+            source: "shiho_bounding";
             action: STATE_SET "default" 0.0;
             target: "blush_left";
             target: "blush_right";
